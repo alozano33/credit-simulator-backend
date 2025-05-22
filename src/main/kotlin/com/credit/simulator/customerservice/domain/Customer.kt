@@ -1,4 +1,4 @@
-package com.credit.simulator.customerservicetest.domain
+package com.credit.simulator.customerservice.domain
 
 import java.time.LocalDate
 

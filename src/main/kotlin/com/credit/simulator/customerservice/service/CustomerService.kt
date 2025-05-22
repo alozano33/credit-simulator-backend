@@ -1,4 +1,4 @@
-package com.credit.simulator.customerservicetest.service
+package com.credit.simulator.customerservice.service
 
 import org.springframework.stereotype.Service
 import java.time.LocalDate

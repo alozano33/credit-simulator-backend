@@ -1,5 +1,6 @@
-package com.credit.simulator.customerservicetest.service
+package com.credit.simulator.customerservice.service
 
+import com.credit.simulator.customerservice.service.CustomerService
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
