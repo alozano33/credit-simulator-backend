@@ -56,7 +56,9 @@ curl --location 'http://localhost:8081/api/v1/simulacao-credito/avaliacao?dataNa
 
 ENDPOINTS
 
-[Aqui você pode adicionar os endpoints disponíveis na sua API]
+[http://localhost:8081/api/v1/simulacao-credito/simulacao
+http://localhost:8081/api/v1/simulacao-credito/avaliacao?dataNascimento=1939-12-16
+]
 
 
 
