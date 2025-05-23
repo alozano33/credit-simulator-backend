@@ -15,7 +15,16 @@ Sistema backend para simulação de crédito desenvolvido com Spring Boot. A apl
 - Nome da Aplicação: credit-simulator-backend
 - Porta: 8081
 
+## 🔧 Configuração do Ambiente de Desenvolvimento
+1. Importe o projeto em sua IDE preferida (recomendamos IntelliJ IDEA)
+2. Certifique-se de que o JDK 17 está configurado corretamente
+3. Atualize as dependências do Maven
+
 ## 🚀 Como Executar
+NO CAMPO EDIT CONFIGURATION SELECIONE CreditSimulatorApplication e clique em RUN
+
+![img.png](img.png)
+
 
 ### Pré-requisitos
 - JDK 17 ou superior
@@ -25,23 +34,29 @@ Sistema backend para simulação de crédito desenvolvido com Spring Boot. A apl
 1. Clone o repositório:
 
 
-A aplicação estará disponível em: `http://localhost:8081`
-## 📝 API Endpoints
-POST /api/v1/simulacoes
+A aplicação estará disponível em: `https://github.com/alozano33/credit-simulator-backend`
+
+##TESTES
+SIMULAÇÃO DE CRÉDITO VIA POST 
+
+curl --location 'http://localhost:8081/api/v1/simulacao-credito/simulacao' \
+--header 'Content-Type: application/json' \
+--data '{
+"valorEmprestimo": 20000,
+"dataNascimento": "1939-12-16",
+"quantidadeParcelas": 12
+
+}'
+
+SIMULAÇÃO DE TAXA DE JUROS ATRAVÉS DA DATA DE NASCIMENTO VIA GET
+
+curl --location 'http://localhost:8081/api/v1/simulacao-credito/avaliacao?dataNascimento=1939-12-16'
+
+
+
+ENDPOINTS
+
 [Aqui você pode adicionar os endpoints disponíveis na sua API]
-## 🔧 Configuração do Ambiente de Desenvolvimento
-1. Importe o projeto em sua IDE preferida (recomendamos IntelliJ IDEA)
-2. Certifique-se de que o JDK 17 está configurado corretamente
-3. Atualize as dependências do Maven
 
-## 👥 Contribuição
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
 
-## 📄 Licença
-[Adicione aqui a licença do seu projeto]
-## 📞 Contato
-[Adicione aqui informações de contato relevantes]
+
