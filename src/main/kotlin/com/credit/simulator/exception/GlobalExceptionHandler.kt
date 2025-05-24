@@ -1,15 +1,10 @@
 package com.credit.simulator.creditsimulationservice.exception
 
-import com.credit.simulator.exception.BusinessException
-import com.credit.simulator.exception.HttpMessageNotReadableException
-import com.credit.simulator.exception.InvalidDateFormatException
-import com.credit.simulator.exception.ParcelasExcedemLimiteException
-import com.credit.simulator.exception.ValorMenorQuePermitido
+import com.credit.simulator.exception.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import java.time.format.DateTimeParseException
 
 @ControllerAdvice
@@ -29,15 +24,6 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
             mapOf(
                 "erro" to "Formato de data inválido. Use o padrão yyyy-MM-dd."
-            )
-        )
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException::class)
-    fun handleArgumentMismatch(ex: MethodArgumentTypeMismatchException): ResponseEntity<Any> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-            mapOf(
-                "erro" to "Parâmetro inválido: ${ex.name}"
             )
         )
     }
