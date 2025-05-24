@@ -17,7 +17,7 @@ class SimulacaoCreditoServiceTest {
     fun `Simulação de emprestimo para pessoas com idade de 30 anos`() {
         val dataNascimento = LocalDate.now().minusYears(30)
         val request = SimulacaoEmprestimoRequest(
-            valorEmprestimo = BigDecimal("100.00"),
+            valorEmprestimo = BigDecimal("1000.00"),
             quantidadeParcelas = 12,
             dataNascimento = dataNascimento
         )

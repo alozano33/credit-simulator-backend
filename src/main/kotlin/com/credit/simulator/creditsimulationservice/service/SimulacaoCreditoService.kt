@@ -2,45 +2,54 @@ package com.credit.simulator.creditsimulationservice.service
 
 import com.credit.simulator.creditsimulationservice.domain.SimulacaoEmprestimoRequest
 import com.credit.simulator.creditsimulationservice.domain.SimulacaoEmprestimoResult
+import com.credit.simulator.exception.InvalidDateFormatException
+import com.credit.simulator.exception.ParcelasExcedemLimiteException
+import com.credit.simulator.exception.ValorMenorQuePermitido
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.Period
+import java.time.format.DateTimeParseException
 
 @Service
 class SimulacaoCreditoService {
 
     /**
-     * Realiza a simulação do empréstimo com base nos valores, prazo e idade.
-     *
-     * @param request Objeto contendo os dados necessários para simulação (valor, prazo e idade)
-     * @return Resultado da simulação contendo valor total, valor da parcela e juros totais
-     */
-    fun simulacaoEmprestimo(request: SimulacaoEmprestimoRequest): SimulacaoEmprestimoResult {
-        val taxaAnual = getTaxaAnual(request.dataNascimento)
-        val taxaMensal = taxaAnual.divide(BigDecimal(12), 10, RoundingMode.HALF_EVEN)
+     * Realiza a simulação do empréstimo com base nos valores, prazo e idade.*/
 
+
+    fun simulacaoEmprestimo(request: SimulacaoEmprestimoRequest): SimulacaoEmprestimoResult {
+
+        val taxaAnual = try {
+            getTaxaAnual(request.dataNascimento)
+        } catch (e: DateTimeParseException) {
+            throw InvalidDateFormatException("Formato de data inválido. Use o padrão yyyy-MM-dd.")
+        }
+        val quantidadeParcelas = request.quantidadeParcelas
+        if (quantidadeParcelas > 48) {
+            throw ParcelasExcedemLimiteException("A quantidade máxima de parcelas permitida é 48.")
+        }
+        val taxaMensal = taxaAnual.divide(BigDecimal(12), 10, RoundingMode.HALF_EVEN)
         val valorEmprestimo = request.valorEmprestimo
-        val valorMensal = request.quantidadeParcelas
+        if (valorEmprestimo < 1000.toBigDecimal()) {
+            throw ValorMenorQuePermitido("valor menor que limite permitido. Valor: $valorEmprestimo")
+        }
 
         val simulador = taxaMensal.multiply(valorEmprestimo)
         val calculadora = BigDecimal.ONE - (BigDecimal.ONE + taxaMensal)
-            .pow(-valorMensal, MathContext.DECIMAL64)
+            .pow(-quantidadeParcelas, MathContext.DECIMAL64)
 
         val parcelaMensal = simulador.divide(calculadora, 2, RoundingMode.HALF_EVEN)
-        val pagamentoTotal = parcelaMensal.multiply(BigDecimal(valorMensal)).setScale(2, RoundingMode.HALF_EVEN)
+        val pagamentoTotal = parcelaMensal.multiply(BigDecimal(quantidadeParcelas)).setScale(2, RoundingMode.HALF_EVEN)
         val jurosCobrado = pagamentoTotal.subtract(valorEmprestimo).setScale(2, RoundingMode.HALF_EVEN)
 
         return SimulacaoEmprestimoResult(pagamentoTotal, parcelaMensal, jurosCobrado)
     }
 
     /**
-     * Obtém a taxa de juros anual baseada na data de nascimento fornecida como String.
-     *
-     * @param dataNascimento Data de nascimento no formato ISO (yyyy-MM-dd)
-     * @return Taxa de juros anual como BigDecimal
+     * Valida e converte a data de nascimento, e calcula o cálculo da taxa.
      */
     fun getTaxaAnual(dataNascimento: String): BigDecimal {
         val taxa = LocalDate.parse(dataNascimento)
@@ -48,15 +57,7 @@ class SimulacaoCreditoService {
     }
 
     /**
-     * Determina a taxa de juros anual com base na idade do solicitante.
-     * As taxas são distribuídas da seguinte forma:
-     * - Até 25 anos: 5%
-     * - De 26 a 40 anos: 3%
-     * - De 41 a 60 anos: 2%
-     * - Acima de 60 anos: 4%
-     *
-     * @param taxa Data de nascimento como LocalDate
-     * @return Taxa de juros anual correspondente à idade
+     * Calcula a taxa com base na idade do cliente.
      */
     fun getTaxaAnual(taxa: LocalDate): BigDecimal {
         val idade = Period.between(taxa, LocalDate.now()).years
